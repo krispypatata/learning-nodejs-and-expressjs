@@ -1,6 +1,9 @@
-import express from 'express';
+import express, { request } from 'express';
 
+// express app instance
 const app = express();
+
+app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
@@ -34,6 +37,16 @@ app.get('/api/users', (request, response) => {
 
     // when filter and value are undefined
     return response.send(mockUsers);
+});
+
+app.post("/api/users", (request, response) => { 
+    console.log(request.body);
+
+    const { body } = request;
+    const newUser = { id:mockUsers[mockUsers.length - 1].id + 1, ...body};
+    mockUsers.push(newUser);
+
+    return response.status(201).send(newUser);
 });
 
 // route parameter
