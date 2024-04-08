@@ -12,12 +12,28 @@ const mockUsers = [
     { id:1, username: "keith", displayName: "Keith" },
     { id:2, username: "ginoel", displayName: "Ginoel" },
     { id:3, username: "gabinete", displayName: "Gabinete" }, 
+    { id:4, username: "krispy", displayName: "Krispy" },
+    { id:5, username: "patata", displayName: "Patata" },
+    { id:6, username: "shio", displayName: "Shio" }, 
+    { id:7, username: "pingu", displayName: "Pingu" }, 
 ];
 
 
 // 2nd route
 app.get('/api/users', (request, response) => {
-    response.send(mockUsers);
+    // query parameters
+    console.log(request.query);
+    // destructure
+    const { 
+        query: { filter, value } 
+    } = request;
+
+    if (filter && value) {
+        return response.send(mockUsers.filter((user) => user[filter].includes(value)));
+    }
+
+    // when filter and value are undefined
+    return response.send(mockUsers);
 });
 
 // route parameter
@@ -51,3 +67,6 @@ app.listen(PORT, () => {
 // localhost:3000
 // localhost:3000/users
 // localhost:3000/products
+// localhost:3000/products?key=value&key2=value2
+
+// Query parameters
