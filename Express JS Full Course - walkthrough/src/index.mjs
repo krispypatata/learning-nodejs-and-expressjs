@@ -134,3 +134,23 @@ app.patch("/api/users/:id", (request, response) => {
 
 
 // DELETE
+app.delete("/api/users/:id", (request, response) => {
+  const { params: { id } } = request;
+
+  const parsedId = parseInt(id);
+
+  if (isNaN(parsedId)) {
+    return response.sendStatus(400);
+  }
+
+  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId);
+  // can't find the user
+  if (findUserIndex === -1) {
+    return response.sendStatus(404);
+  }
+
+  mockUsers.splice(findUserIndex, 1);
+  
+  return response.sendStatus(200);
+
+});
