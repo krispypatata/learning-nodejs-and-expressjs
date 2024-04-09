@@ -1,15 +1,65 @@
-import express, { request } from 'express';
+import express, { request, response } from 'express';
 
 // express app instance
 const app = express();
 
 app.use(express.json());
 
+// global
+// app.use(loggingMiddleware);  // comment to use it on only one route
+
 const PORT = process.env.PORT || 3000;
 
-app.get("/", (request, response)=> {
+// app.get(
+//   "/", 
+//   (request, response, next)=> {
+//     console.log("Base URL 1");
+//     next();
+//   }, 
+//   (request, response, next)=> {
+//     console.log("Base URL 2");
+//     next();
+//   }, 
+//   (request, response, next)=> {
+//     console.log("Base URL 3");
+//     next();
+//   }, 
+//   (request, response)=> {
+//     response.status(201).send({ msg: "Hello World!" });
+// });
+
+const resolveIndexByUserId = (request, response, next) => {
+  const { body, params: { id } } = request;
+
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) {
+    return response.sendStatus(400);
+  }
+
+  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId);
+
+  if (findUserIndex === -1) {
+    return response.sendStatus(404);
+  }
+
+  next();
+}
+
+const loggingMiddleware = (request, response, next) => {
+  console.log(`${request.method} - ${request.url}`);
+  next();
+}
+
+
+// with loggingMiddleware function
+// base url
+app.get("/", loggingMiddleware, (request, response)=> {
   response.status(201).send({ msg: "Hello World!" });
 });
+
+
+
+
 
 const mockUsers = [
   { id:1, username: "keith", displayName: "Keith" },
@@ -150,7 +200,7 @@ app.delete("/api/users/:id", (request, response) => {
   }
 
   mockUsers.splice(findUserIndex, 1);
-  
+
   return response.sendStatus(200);
 
 });
